@@ -1,5 +1,5 @@
 {
-    "targets": {
+    "image-targets": {
 	"default": {
 	    "packages": [
 		"libaio_devel"
