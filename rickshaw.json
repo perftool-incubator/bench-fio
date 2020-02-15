@@ -2,7 +2,7 @@
   "benchmark": "fio",
   "controller" : {
     "pre-script" : "%bench-dir%/fio-prepare-jobfile",
-    "post-script" : "%bench-dir%fio-postprocess-cdm",
+    "post-script" : "%bench-dir%fio-post-process",
     "files-to-clients": [ "%run-dir%/fio.job" ]
   },
   "client" : {
