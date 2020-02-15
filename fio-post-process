@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+## -*- mode: perl; indent-tabs-mode: t; perl-indent-level: 4 -*-
+## vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=perl
+
+use strict;
+use warnings;
+use JSON::XS;
+use Data::Dumper;
+
+my @metrics;
+opendir(my $dh, ".");
+for my $log_file (sort readdir($dh)) {
+    if ($log_file =~ /fio_([a-z]+)\.(\d+)\.log$/) {
+        my @logfile_metrics;
+        my $type = $1;
+        my $job_id = $2;
+        open(my $log_fh, $log_file) || die "[ERROR]could not open file " . $log_file;
+        while (<$log_fh>) {
+            if ( /^(\d+),\s+(\d+),\s+(\d+),\s+(\d+)/ ) {
+                my $timestamp_ms = $1;
+                my $value = $2;
+                my $io_oper = $3;
+                continue if ($io_oper > 2);
+                # Fio happens to use 0 for Read, 1 for Write, and 2 for Trim which is
+                # super convenient to map to the array index.
+                my %metric_sample = ('end' => $timestamp_ms, 'value' => $value);
+                push(@{ $logfile_metrics[$io_oper]{'data'} }, \%metric_sample);
+            }
+        }
+        close($log_fh);
+        for (my $i = 0; $i < 3; $i++)  {
+            # If a metrics for a particular io-oper exists, create the 'desc' for it
+            if (defined $logfile_metrics[$i]) {
+                my $io_oper = $i;
+                s/0/Read/, s/1/Write/, s/2/Trim/ for $io_oper;
+                my $class = $type;
+                s/.*lat$/latency/, s/^(bw|iops)$/throughput/ for $class;
+                my %desc = ('class' => $class, 'source' => 'fio',
+                            'type' => $type, 'name-format' => '%job-id%-%io-oper%');
+                $logfile_metrics[$i]{'desc'} = \%desc;
+                $logfile_metrics[$i]{'names'}{'job-id'} = $job_id;
+                $logfile_metrics[$i]{'names'}{'io-oper'} = $io_oper;
+                push(@metrics, \%{ $logfile_metrics[$i] });
+            }
+        }
+    }
+}
+# In any benchmark post-process script, the metrics generated need to be attributed to a
+# time-period (AKA benchmark-phase).  The period which is used to report and offical
+# result for the benchmark is the 'measurement' period.  Ohter periods thay may exist
+# could be "warm-up", "prep", etc.
+my %sample;
+my @periods;
+my %period = ('name' => 'measurement');
+$period{'metrics'} = \@metrics;
+push(@periods, \%period);
+$sample{'periods'} = \@periods;
+closedir $dh;
+if (scalar @metrics > 0) {
+    my $coder = JSON::XS->new;
+    open(JSON_FH, ">post-process-data.json") || die("Could not open file post-process-data.json for writing\n");
+    print JSON_FH $coder->encode(\%sample);
+    close JSON_FH;
+}
