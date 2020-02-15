@@ -1,0 +1,16 @@
+{
+  "benchmark": "fio",
+  "controller" : {
+    "pre-script" : "%bench-dir%/fio-prepare-jobfile",
+    "post-script" : "%bench-dir%fio-postprocess-cdm",
+    "files-to-clients": [ "%run-dir%/fio.job" ]
+  },
+  "client" : {
+    "packages" : [ "pbench-fio-3.12-1" ],
+    "bin" : "fio",
+    "param_regex" : [ "s/--clients=.+//",
+      "s/\\s--jobfile=(\\S+)//",
+      "s/(.*)/$1 fio.job/"
+      ]
+  }
+}

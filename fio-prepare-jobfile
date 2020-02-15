@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Just copy/rename the jobfile specified in the params to the default location
+# or generate a new one.
+#
+# Expected outcome is a "fio.job" file in the CWD
+
+while [ ! -z $1 ]; do
+	# TODO: support --arg val
+	arg=`echo $1 | awk -F= '{print $1}'`
+	if [ "$arg" == "--jobfile" ]; then
+		jobfile_path="`echo $1 | awk -F= '{print $2}'`"
+	else
+		echo "Ignoring this argument: $arg"
+	fi
+	shift
+done
+if [ -z "$jobfile_path" ]; then
+	echo [global] >fio.job
+	echo [job-1] >>fio.job
+elif [ ! -e $jobfile_path ]; then
+	echo "could not find [$jobfile_path]"
+	exit 1
+else
+	/bin/cp "$jobfile_path" fio.job
+fi
