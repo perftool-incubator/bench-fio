@@ -23,7 +23,8 @@
 		    "unpack": "tar -xzf libaio.tar.gz",
 		    "get_dir": "tar -tzf libaio.tar.gz | head -n 1",
 		    "build": [
-			"make prefix=/usr install"
+			"make prefix=/usr install",
+			"ldconfig --verbose"
 		    ]
 		}
 	    }
