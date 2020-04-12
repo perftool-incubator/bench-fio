@@ -1,16 +1,19 @@
 {
-  "benchmark": "fio",
-  "controller" : {
-    "pre-script" : "%bench-dir%/fio-prepare-jobfile",
-    "post-script" : "%bench-dir%fio-post-process",
-    "files-to-clients": [ "%run-dir%/fio.job" ]
-  },
-  "client" : {
-    "packages" : [ "pbench-fio-3.12-1" ],
-    "bin" : "fio",
-    "param_regex" : [ "s/--clients=.+//",
-      "s/\\s--jobfile=(\\S+)//",
-      "s/(.*)/$1 fio.job/"
-      ]
-  }
+    "rickshaw-benchmark": {
+        "schema": {
+            "version": "2020.03.18"
+        }
+    },
+    "benchmark": "fio",
+    "controller" : {
+        "pre-script" : "%bench-dir%/fio-prepare-jobfile",
+        "post-script" : "%bench-dir%fio-post-process"
+    },
+    "client" : {
+        "files-from-controller": [
+            { "src": "%run-dir%/fio.job", "dest": "." }
+        ],
+        "bin" : "fio",
+        "param_regex" : [ "s/--clients=.+//", "s/\\s--jobfile=(\\S+)//", "s/(.*)/$1 fio.job/" ]
+    }
 }
