@@ -23,7 +23,7 @@ for my $log_file (sort readdir($dh)) {
                 continue if ($io_oper > 2);
                 # Fio happens to use 0 for Read, 1 for Write, and 2 for Trim which is
                 # super convenient to map to the array index.
-                my %metric_sample = ('end' => $timestamp_ms, 'value' => $value);
+                my %metric_sample = ('end' => int $timestamp_ms, 'value' => (0.0 + $value));
                 push(@{ $logfile_metrics[$io_oper]{'data'} }, \%metric_sample);
             }
         }
@@ -34,7 +34,7 @@ for my $log_file (sort readdir($dh)) {
                 my $io_oper = $i;
                 s/0/Read/, s/1/Write/, s/2/Trim/ for $io_oper;
                 my $class = $type;
-                s/.*lat$/latency/, s/^(bw|iops)$/throughput/ for $class;
+                s/.*lat$/count/, s/^(bw|iops)$/throughput/ for $class;
                 my %desc = ('class' => $class, 'source' => 'fio',
                             'type' => $type, 'name-format' => '%job-id%-%io-oper%');
                 $logfile_metrics[$i]{'desc'} = \%desc;
@@ -55,6 +55,7 @@ my %period = ('name' => 'measurement');
 $period{'metrics'} = \@metrics;
 push(@periods, \%period);
 $sample{'periods'} = \@periods;
+$sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2020.03.18";
 closedir $dh;
 if (scalar @metrics > 0) {
     my $coder = JSON::XS->new;
