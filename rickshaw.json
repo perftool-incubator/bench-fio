@@ -1,7 +1,7 @@
 {
     "rickshaw-benchmark": {
         "schema": {
-            "version": "2020.03.18"
+            "version": "2020.04.14"
         }
     },
     "benchmark": "fio",
@@ -13,7 +13,7 @@
         "files-from-controller": [
             { "src": "%run-dir%/fio.job", "dest": "." }
         ],
-        "bin" : "fio",
+        "start" : "fio",
         "param_regex" : [ "s/--clients=.+//", "s/\\s--jobfile=(\\S+)//", "s/(.*)/$1 fio.job/" ]
     }
 }
