@@ -1,0 +1,22 @@
+#!/bin/bash
+# vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=bash
+# -*- mode: sh; indent-tabs-mode: nil; sh-basic-offset: 4 -*-
+
+opts=$(getopt -q -o "" --longoptions "runtime:" -n "getopt.sh" -- "$@");
+eval set -- "$opts";
+while true; do
+    case "$1" in
+        --runtime)
+            shift
+            echo $1 | sed -e 's/s//'
+            shift
+            ;;
+        --)
+            shift
+            exit
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
