@@ -54,6 +54,7 @@ my @periods;
 my %period = ('name' => 'measurement');
 $period{'metrics'} = \@metrics;
 push(@periods, \%period);
+$sample{'primary-metric'} = "iops";
 $sample{'periods'} = \@periods;
 $sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2020.03.18";
 closedir $dh;
