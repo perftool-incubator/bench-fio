@@ -36,10 +36,10 @@ for my $log_file (sort readdir($dh)) {
                 my $class = $type;
                 s/.*lat$/count/, s/^(bw|iops)$/throughput/ for $class;
                 my %desc = ('class' => $class, 'source' => 'fio',
-                            'type' => $type, 'name-format' => '%job-id%-%io-oper%');
+                            'type' => $type, 'name-format' => '%job%-%cmd%');
                 $logfile_metrics[$i]{'desc'} = \%desc;
-                $logfile_metrics[$i]{'names'}{'job-id'} = $job_id;
-                $logfile_metrics[$i]{'names'}{'io-oper'} = $io_oper;
+                $logfile_metrics[$i]{'names'}{'job'} = $job_id;
+                $logfile_metrics[$i]{'names'}{'cmd'} = $io_oper;
                 push(@metrics, \%{ $logfile_metrics[$i] });
             }
         }
@@ -55,6 +55,7 @@ my %period = ('name' => 'measurement');
 $period{'metrics'} = \@metrics;
 push(@periods, \%period);
 $sample{'primary-metric'} = "iops";
+$sample{'primary-period'} = "measurement";
 $sample{'periods'} = \@periods;
 $sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2020.03.18";
 closedir $dh;
