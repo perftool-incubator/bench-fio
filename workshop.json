@@ -10,6 +10,7 @@
             "requirements": [
                 "zlib_src",
                 "libaio_src",
+		"numactl_src",
                 "fio_src"
             ]
         }
@@ -24,6 +25,24 @@
                 ]
             }
         },
+	{
+            "name": "numactl_src",
+            "type": "source",
+            "source_info": {
+                "url": "https://github.com/numactl/numactl/releases/download/v2.0.14/numactl-2.0.14.tar.gz",
+                "filename": "numactl.tar.gz",
+                "commands": {
+                    "unpack": "tar -xzf numactl.tar.gz",
+                    "get_dir": "tar -tzf numactl.tar.gz | head -n 1",
+                    "commands": [
+                        "./configure",
+			"make",
+			"make prefix=/usr install",
+                        "ldconfig --verbose"
+                    ]
+                }
+            }
+	},
         {
             "name": "libaio_src",
             "type": "source",
