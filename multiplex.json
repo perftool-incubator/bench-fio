@@ -108,6 +108,13 @@
         "verify_interval", "verify_offset", "write_barrier"
       ],
       "value_regex" : "[1-9][0-9]*"
+    },
+    "key_only" : {
+      "description" : "options that are --key only and not --key=value",
+      "arguments" : [
+	"norandommap"
+      ],
+      "value_regex" : "[ON,OFF]"
     }
   }
 }

@@ -16,6 +16,11 @@
         ],
         "runtime" : "fio-get-runtime",
         "start" : "fio",
-        "param_regex" : [ "s/--clients=.+//", "s/\\s--jobfile=(\\S+)//", "s/(.*)/$1 fio.job/" ]
+        "param_regex" : [ "s/--clients=.+//",
+			  "s/\\s--jobfile=(\\S+)//",
+			  "s/(.*)/$1 fio.job/",
+			  "s/(\\s--[^\\s]+)=ON/$1/g",
+			  "s/\\s--[^\\s]+=OFF//g"
+			]
     }
 }
