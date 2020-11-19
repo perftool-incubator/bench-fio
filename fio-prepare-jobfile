@@ -18,6 +18,8 @@ done
 if [ -z "$jobfile_path" ]; then
 	echo [global] >fio.job
 	echo [job-1] >>fio.job
+elif [ "$jobfile_path" == "EMPTY_JOB_FILE" ]; then
+	echo >fio.job
 elif [ ! -e $jobfile_path ]; then
 	echo "could not find [$jobfile_path]"
 	exit 1
