@@ -57,7 +57,7 @@ push(@periods, \%period);
 $sample{'primary-metric'} = "iops";
 $sample{'primary-period'} = "measurement";
 $sample{'periods'} = \@periods;
-$sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2020.03.18";
+$sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2021.03.02";
 closedir $dh;
 if (scalar @metrics > 0) {
     my $coder = JSON::XS->new;
