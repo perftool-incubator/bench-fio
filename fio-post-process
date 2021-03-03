@@ -36,7 +36,7 @@ for my $log_file (sort readdir($dh)) {
                 my $class = $type;
                 s/.*lat$/count/, s/^(bw|iops)$/throughput/ for $class;
                 my %desc = ('class' => $class, 'source' => 'fio',
-                            'type' => $type, 'name-format' => '%job%-%cmd%');
+                            'type' => $type);
                 $logfile_metrics[$i]{'desc'} = \%desc;
                 $logfile_metrics[$i]{'names'}{'job'} = $job_id;
                 $logfile_metrics[$i]{'names'}{'cmd'} = $io_oper;
