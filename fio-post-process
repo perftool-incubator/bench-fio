@@ -6,45 +6,58 @@ use strict;
 use warnings;
 use JSON::XS;
 use Data::Dumper;
+BEGIN {
+    if (!(exists $ENV{'TOOLBOX_HOME'} && -d "$ENV{'TOOLBOX_HOME'}/perl")) {
+    print "This script requires libraries that are provided by the toolbox project.\n";
+    print "Toolbox can be acquired from https://github.com/perftool-incubator/toolbox and\n";
+    print "then use 'export TOOLBOX_HOME=/path/to/toolbox' so that it can be located.\n";
+    exit 1;
+    }
+}
+use lib "$ENV{'TOOLBOX_HOME'}/perl";
+use toolbox::json;
+use toolbox::metrics;
 
-my @metrics;
 opendir(my $dh, ".");
 for my $log_file (sort readdir($dh)) {
     if ($log_file =~ /fio_([a-z]+)\.(\d+)\.log$/) {
         my @logfile_metrics;
         my $type = $1;
         my $job_id = $2;
-        open(my $log_fh, $log_file) || die "[ERROR]could not open file " . $log_file;
-        while (<$log_fh>) {
-            if ( /^(\d+),\s+(\d+),\s+(\d+),\s+(\d+)/ ) {
-                my $timestamp_ms = $1;
-                my $value = $2;
-                my $io_oper = $3;
-                continue if ($io_oper > 2);
-                # Fio happens to use 0 for Read, 1 for Write, and 2 for Trim which is
-                # super convenient to map to the array index.
-                my %metric_sample = ('end' => int $timestamp_ms, 'value' => 0.0 + $value);
-                push(@{ $logfile_metrics[$io_oper]{'data'} }, \%metric_sample);
-            }
+        my %names = ('job' => $job_id);
+        my %desc = ();
+        if ($type eq "iops" ) {
+             %desc = ('source' => 'fio', 'class' => 'throughput', 'type' => 'iops');
+        } elsif ($type eq "bw") {
+             %desc = ('source' => 'fio', 'class' => 'throughput', 'type' => 'bw-KiBs');
+        } elsif ($type eq "lat") {
+             %desc = ('source' => 'fio', 'class' => 'count', 'type' => 'latency-usec');
+        } elsif ($type eq "clat") {
+             %desc = ('source' => 'fio', 'class' => 'count', 'type' => 'completion-latency-usec');
+        } elsif ($type eq "slat") {
+             %desc = ('source' => 'fio', 'class' => 'count', 'type' => 'submission-latency-usec');
+        } else {
+            printf "fio log file %s not recognized, skippping\n", $type;
         }
-        close($log_fh);
-        for (my $i = 0; $i < 3; $i++)  {
-            # If a metrics for a particular io-oper exists, create the 'desc' for it
-            if (defined $logfile_metrics[$i]) {
-                my $io_oper = $i;
-                s/0/Read/, s/1/Write/, s/2/Trim/ for $io_oper;
-                my $class = $type;
-                s/.*lat$/count/, s/^(bw|iops)$/throughput/ for $class;
-                my %desc = ('class' => $class, 'source' => 'fio',
-                            'type' => $type);
-                $logfile_metrics[$i]{'desc'} = \%desc;
-                $logfile_metrics[$i]{'names'}{'job'} = $job_id;
-                $logfile_metrics[$i]{'names'}{'cmd'} = $io_oper;
-                push(@metrics, \%{ $logfile_metrics[$i] });
+        if (defined $desc{'type'}) {
+            open(my $log_fh, $log_file) || die "[ERROR]could not open file " . $log_file;
+            while (<$log_fh>) {
+                if ( /^(\d+),\s+(\d+),\s+(\d+),\s+(\d+)/ ) {
+                    my $timestamp_ms = $1;
+                    my $value = $2;
+                    my $io_oper = $3;
+                    continue if ($io_oper > 2);
+                    s/0/Read/, s/1/Write/, s/2/Trim/ for $io_oper;
+                    $names{'cmd'} = $io_oper;
+                    my %s = ('end' => int $timestamp_ms, 'value' => $value);
+                    log_sample("0", \%desc, \%names, \%s);
+                }
             }
+            close($log_fh);
         }
     }
 }
+my $metric_data_name = finish_samples();
 # In any benchmark post-process script, the metrics generated need to be attributed to a
 # time-period (AKA benchmark-phase).  The period which is used to report and offical
 # result for the benchmark is the 'measurement' period.  Ohter periods thay may exist
@@ -52,16 +65,15 @@ for my $log_file (sort readdir($dh)) {
 my %sample;
 my @periods;
 my %period = ('name' => 'measurement');
-$period{'metrics'} = \@metrics;
+my @metric_files = ( $metric_data_name );
+$period{'metric-files'} = \@metric_files;
 push(@periods, \%period);
 $sample{'primary-metric'} = "iops";
 $sample{'primary-period'} = "measurement";
 $sample{'periods'} = \@periods;
-$sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2021.03.02";
+$sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2021.04.12";
 closedir $dh;
-if (scalar @metrics > 0) {
-    my $coder = JSON::XS->new;
-    open(JSON_FH, ">post-process-data.json") || die("Could not open file post-process-data.json for writing\n");
-    print JSON_FH $coder->encode(\%sample);
-    close JSON_FH;
-}
+my $coder = JSON::XS->new;
+open(JSON_FH, ">post-process-data.json") || die("Could not open file post-process-data.json for writing\n");
+print JSON_FH $coder->encode(\%sample);
+close JSON_FH;
