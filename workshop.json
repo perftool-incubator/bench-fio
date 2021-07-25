@@ -35,9 +35,9 @@
                     "unpack": "tar -xzf numactl.tar.gz",
                     "get_dir": "tar -tzf numactl.tar.gz | head -n 1",
                     "commands": [
-                        "./configure",
+                        "./configure --prefix=/usr",
 			"make",
-			"make prefix=/usr install",
+			"make install",
                         "ldconfig --verbose"
                     ]
                 }
