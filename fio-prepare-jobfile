@@ -1,28 +1,56 @@
 #!/bin/bash
+# -*- mode: sh; indent-tabs-mode: nil; sh-basic-offset: 4 -*-
+# vim: autoindent tabstop=4 shiftwidth=4 expandtab softtabstop=4 filetype=bash
 
 # Just copy/rename the jobfile specified in the params to the default location
 # or generate a new one.
 #
 # Expected outcome is a "fio.job" file in the CWD
 
+jobfile=""
+
 while [ ! -z $1 ]; do
-	# TODO: support --arg val
-	arg=`echo $1 | awk -F= '{print $1}'`
-	if [ "$arg" == "--jobfile" ]; then
-		jobfile_path="`echo $1 | awk -F= '{print $2}'`"
-	else
-		echo "Ignoring this argument: $arg"
-	fi
-	shift
+    # TODO: support --arg val
+    arg=`echo $1 | awk -F= '{print $1}'`
+    if [ "$arg" == "--jobfile" ]; then
+        jobfile="`echo $1 | awk -F= '{print $2}'`"
+	echo "Found jobfile argument = ${jobfile}"
+    else
+        echo "Ignoring this argument: $arg"
+    fi
+    shift
 done
-if [ -z "$jobfile_path" ]; then
-	echo [global] >fio.job
-	echo [job-1] >>fio.job
-elif [ "$jobfile_path" == "EMPTY_JOB_FILE" ]; then
-	echo >fio.job
-elif [ ! -e $jobfile_path ]; then
-	echo "could not find [$jobfile_path]"
-	exit 1
-else
-	/bin/cp "$jobfile_path" fio.job
+
+jobfile_path=""
+if [ -n "${jobfile}" ]; then
+    if [ "${jobfile}" == "EMPTY_JOB_FILE" ]; then
+        echo "Creating empty fio.job"
+        echo >fio.job
+        exit 0
+    fi
+
+    if [ -n "${CRUCIBLE_HOSTFS_PWD}" ]; then
+        echo "Using CRUCIBLE_HOSTFS_PWD=${CRUCIBLE_HOSTFS_PWD}"
+        jobfile_path+="/hostfs"
+        jobfile_path+=${CRUCIBLE_HOSTFS_PWD}
+        jobfile_path+="/"
+    fi
+    jobfile_path+=${jobfile}
+
+    if [ ! -e ${jobfile_path} ]; then
+        echo "ERROR: Could not find [${jobfile}]"
+        exit 1
+    else
+        echo "Copying ${jobfile_path} to fio.job"
+        /bin/cp "${jobfile_path}" fio.job
+        echo "Contents of fio.job:"
+        cat fio.job
+        exit 0
+    fi
 fi
+
+# default case when there is no --jobfile parameter
+echo "Creating simple fio.job:"
+echo [global] >fio.job
+echo [job-1] >>fio.job
+cat fio.job
