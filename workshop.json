@@ -81,7 +81,7 @@
             "name": "fio_src",
             "type": "source",
             "source_info": {
-                "url": "https://github.com/axboe/fio/archive/fio-3.18.tar.gz",
+                "url": "https://github.com/axboe/fio/archive/refs/tags/fio-3.27.tar.gz",
                 "filename": "fio.tar.gz",
                 "commands": {
                     "unpack": "tar -xzf fio.tar.gz",
