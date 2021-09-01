@@ -13,7 +13,25 @@
 		"numactl_src",
                 "fio_src"
             ]
-        }
+        },
+	{
+	    "name": "centos7",
+	    "requirements": [
+		"zlib_src",
+		"libaio_src",
+		"numactl_src",
+		"fio_src_downlevel"
+	    ]
+	},
+	{
+	    "name": "rhubi7",
+	    "requirements": [
+		"zlib_src",
+		"libaio_src",
+		"numactl_src",
+		"fio_src_downlevel"
+	    ]
+	}
     ],
     "requirements": [
         {
@@ -82,6 +100,24 @@
             "type": "source",
             "source_info": {
                 "url": "https://github.com/axboe/fio/archive/refs/tags/fio-3.27.tar.gz",
+                "filename": "fio.tar.gz",
+                "commands": {
+                    "unpack": "tar -xzf fio.tar.gz",
+                    "get_dir": "tar -tzf fio.tar.gz | head -n 1",
+                    "commands": [
+                        "./configure",
+                        "make",
+                        "make install",
+                        "fio --version"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "fio_src_downlevel",
+            "type": "source",
+            "source_info": {
+                "url": "https://github.com/axboe/fio/archive/refs/tags/fio-3.20.tar.gz",
                 "filename": "fio.tar.gz",
                 "commands": {
                     "unpack": "tar -xzf fio.tar.gz",
