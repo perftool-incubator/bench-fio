@@ -23,7 +23,7 @@
     "validations": {
 	"size_BKMG" : {
 	    "description" : "bytes in B/k/M/G, converted to K, shown in k",
-	    "args" : [ "bs", "filesize", "io_size", "mem" ],
+	    "args" : [ "bs", "filesize", "io_size", "mem", "size" ],
         "vals": "^(([1-9][0-9]*\\.?[0-9]*)|(0?\\.[0-9]+)).*[BKMG]?",
         "convert": "K",
         "transform": {
