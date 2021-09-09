@@ -13,25 +13,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout bench-fio
+      uses: actions/checkout@v2
+      with:
+        path: bench-fio
 
-    - name: Show Environment
-      run: |
-        whoami
-        echo
-        pwd
-        echo
-        ls -la
+    - name: Checkout crucible-ci
+      uses: actions/checkout@v2
+      with:
+        repository: perftool-incubator/crucible-ci
+        ref: main
+        path: crucible-ci
 
-    - name: Git Clone crucible-ci
-      run: |
-        pushd ~/
-        git clone https://github.com/perftool-incubator/crucible-ci.git
-
-    - name: Setup CI Environment
-      run: |
-        sudo ~/crucible-ci/setup-ci-environment --ci-target fio --ci-target-dir $(pwd)
-
-    - name: Run CI
-      run: |
-        sudo ~/crucible-ci/run-ci
+    - name: Run crucible-ci->integration-tests
+      uses: ./crucible-ci/.github/actions/integration-tests
+      with:
+        artifact_tag: "fio"
+        ci_target: "fio"
+        ci_target_dir: ${{ github.workspace }}/bench-fio
+        scenarios: "fio"
+        repeat_runs: "no"
+        run_samples: "1"
