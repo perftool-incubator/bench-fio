@@ -34,3 +34,4 @@ jobs:
         scenarios: "fio"
         repeat_runs: "no"
         run_samples: "1"
+        userenvs: "all"
