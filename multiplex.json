@@ -1,125 +1,127 @@
 {
     "presets": {
-	"basic" : [
-	    { "arg": "rw", "vals": ["read", "randread"] },
-	    { "arg": "filename", "vals": ["/tmp/fio-tst"] },
-	    { "arg": "filesize", "vals": ["256M"] },
-	    { "arg": "runtime", "vals": ["30s"] },
-	    { "arg": "bs", "vals": ["16k"] },
-	    { "arg": "time_based", "vals": ["1"] }
-	],
-	"mandatory" : [
-	    { "arg": "write_hist_log", "vals": ["fio"] },
-	    { "arg": "log_hist_msec", "vals": ["10000"] },
-	    { "arg": "write_bw_log", "vals": ["fio"] },
-	    { "arg": "write_iops_log", "vals": ["fio"] },
-	    { "arg": "write_lat_log", "vals": ["fio"] },
-	    { "arg": "log_avg_msec", "vals": ["1000"] },
-	    { "arg": "log_unix_epoch", "vals": ["1"] },
-	    { "arg": "output-format", "vals": ["json"] },
-	    { "arg": "output", "vals": ["fio-result.json"] }
-	]
+        "defaults" : [
+            { "arg": "rw", "vals": ["read", "randread"] },
+            { "arg": "filename", "vals": ["/tmp/fio-tst"] },
+            { "arg": "filesize", "vals": ["256M"] },
+            { "arg": "runtime", "vals": ["30s"] },
+            { "arg": "bs", "vals": ["16k"] },
+            { "arg": "time_based", "vals": ["1"] }
+        ],
+        "essentials" : [
+            { "arg": "write_hist_log", "vals": ["fio"] },
+            { "arg": "log_hist_msec", "vals": ["10000"] },
+            { "arg": "write_bw_log", "vals": ["fio"] },
+            { "arg": "write_iops_log", "vals": ["fio"] },
+            { "arg": "write_lat_log", "vals": ["fio"] },
+            { "arg": "log_avg_msec", "vals": ["1000"] },
+            { "arg": "log_unix_epoch", "vals": ["1"] },
+            { "arg": "output-format", "vals": ["json"] },
+            { "arg": "output", "vals": ["fio-result.json"] }
+        ]
     },
     "validations": {
-	"size_BKMG" : {
-	    "description" : "bytes in B/k/M/G, converted to K, shown in k",
-	    "args" : [ "bs", "filesize", "io_size", "mem", "size" ],
+    "size_BKMG" : {
+        "description" : "bytes in B/k/M/G, converted to K, shown in k",
+        "args" : [ "bs", "filesize", "io_size", "mem", "size" ],
         "vals": "^(([1-9][0-9]*\\.?[0-9]*)|(0?\\.[0-9]+)).*[BKMG]?",
         "convert": "K",
         "transform": {
             "search": "K",
             "replace": "k"
         }
-	},
-	"size_BKMG_range" : {
-	    "description" : "a range of size_BKMG",
-	    "args" : [ "bsrange", "bssplit" ],
-	    "vals" : "[1-9][0-9]*[BKMG]\\-[1-9][0-9]*[BKMG]",
+    },
+    "size_BKMG_range" : {
+        "description" : "a range of size_BKMG",
+        "args" : [ "bsrange", "bssplit" ],
+        "vals" : "[1-9][0-9]*[BKMG]\\-[1-9][0-9]*[BKMG]",
         "convert": "K",
         "transform": {
             "search": "K",
             "replace": "k"
         }
-	},
-	"generic_string" : {
-	    "description" : "all types of strings",
-	    "args" : [
-		"output-format", "output", "buffer_pattern", "cgroup", "clocksource",
-		"continue_on_error", "cpus_allowed_policy", "cpus_allowed", "directory",
-		"exec_postrun", "exec_prerun", "filename", "ignore_error", "ioscheduler",
-		"jobfile"
-	    ],
-	    "vals" : ".+"
-	},
-	"rw_types" : {
-	    "description" : "all possible testtypes",
-	    "args" : [ "rw" ],
-	    "vals" : "^(|rand)(read|write|trim)$|^readwrite$|^randrw$|^trimwrite$"
-	},
-	"ioengine_types" : {
-	    "description" : "all possible ioengine types",
-	    "args" : [ "ioengine" ],
-	    "vals" : "^(|p|pv|v)sync$|^pvsync2$|^posixaio$|^mmap$|^(|net)splice$|^sg$|^null$|^net$|^cpuio$|^rdma$|^e4defrag$|^falloc$|^filecreate$|^external$|^libaio$"
-	},
-	"log_types" : {
-	    "description" : "all possible log types",
-	    "args" : [ "write_bw_log", "write_hist_log", "write_iolog", "write_iops_log",
-		       "write_lat_log"
-		     ],
-	    "vals" : "^fio$"
-	},
-	"io_submit_modes" : {
-	    "description" : "How IO submissions and completions are done",
-	    "args" : [ "io_submit_mode" ],
-	    "vals" : "^inline$|^offload$"
-	},
-	"time_smh" : {
-	    "description" : "time in seconds, minutes, or hours: 10s 2m 1h",
-	    "args" : [ "runtime", "steadystate_duration", "steadystate_ramp_time",
-		       "steadystate", "ramp_time"
-		     ],
-	    "vals" : "^[1-9][0-9]*[smh]$"
-	},
-	"boolean" : {
-	    "description" : "1 for true and 0 for false",
-	    "args" : [ "allow_file_create", "allow_mounted_write", "allrandrepeat",
-		       "atomic", "block_error_percentiles", "buffered", "cgroup_nodelete",
-		       "clat_percentiles", "create_fsync", "create_only", "create_on_open",
-		       "create_serialize", "direct", "disable_bw_measurement", "disable_clat",
-		       "disable_lat", "disable_slat", "disk_util", "do_verify", "end_fsync",
-		       "error_dump", "experimental_verify", "file_append", "fill_device",
-		       "fsync_on_close", "gtod_reduce", "invalidate", "lat_percentiles", "log_max_value",
-		       "log_offset", "log_store_compressed", "log_unix_epoch", "overwrite", "per_job_logs",
-		       "pre_read", "randrepeat", "rate_ignore_thinktime", "replay_no_stall",
-		       "scramble_buffers", "serialize_overlap", "stats", "sync", "trim_verify_zero",
-		       "unified_rw_reporting", "unique_filename", "unlink_each_loop", "unlink",
-		       "verify_dump", "erify_fatal", "verify_state_load", "verify_state_save",
-		       "time_based"
-		     ],
-	    "vals" : "[0,1]"
-	},
-	"positive_integer" : {
-	    "description" : "a whole number greater than 0",
-	    "args" : [ "ba", "buffer_compress_chunk", "buffer_compress_percentage",
-		       "bwavgtime", "cgroup_weight", "cpumask", "dedupe_percentage", "fdatasync", "flow_id",
-		       "flow_sleep", "flow", "flow_watermark", "fsync", "gia", "gtod_cpu", "hugepage-size",
-		       "iodepth_batch_complete_max", "iodepth_batch_complete_min", "iodepth_batch",
-		       "iodepth_low", "iodepth", "iopsavgtime", "kb_base", "log_avg_msec", "log_compression",
-		       "log_hist_coarseness", "log_hist_msec", "loops", "nice", "nrfiles", "numjobs",
-		       "offset_align", "openfiles", "percentage_random", "prioclass", "prio", "rate_cycle",
-		       "rate_iops_min", "rate_iops", "rate_min", "rate", "replay_align", "replay_scale",
-		       "replay_time_scale", "rwmixread", "rwmixwrite", "significant_figures",
-		       "thinktime_blocks", "thinktime_spin", "thinktime", "trim_backlog_batch",
-		       "trim_percentage", "uid", "unit_base", "verify_async", "verify_backlog_batch",
-		       "verify_interval", "verify_offset", "write_barrier"
-		     ],
-	    "vals" : "[1-9][0-9]*"
-	},
-	"key_only" : {
-	    "description" : "options that are --key only and not --key=value",
-	    "args" : [ "norandommap" ],
-	    "vals" : "[ON,OFF]"
-	}
+    },
+    "generic_string" : {
+        "description" : "all types of strings",
+        "args" : [
+            "output-format", "output", "buffer_pattern", "cgroup", "clocksource",
+            "continue_on_error", "cpus_allowed_policy", "cpus_allowed", "directory",
+            "exec_postrun", "exec_prerun", "filename", "ignore_error", "ioscheduler",
+            "jobfile"
+        ],
+        "vals" : ".+"
+    },
+    "rw_types" : {
+        "description" : "all possible testtypes",
+        "args" : [ "rw" ],
+        "vals" : "^(|rand)(read|write|trim)$|^readwrite$|^randrw$|^trimwrite$"
+    },
+    "ioengine_types" : {
+        "description" : "all possible ioengine types",
+        "args" : [ "ioengine" ],
+        "vals" : "^(|p|pv|v)sync$|^pvsync2$|^posixaio$|^mmap$|^(|net)splice$|^sg$|^null$|^net$|^cpuio$|^rdma$|^e4defrag$|^falloc$|^filecreate$|^external$|^libaio$"
+    },
+    "log_types" : {
+        "description" : "all possible log types",
+        "args" : [
+            "write_bw_log", "write_hist_log", "write_iolog", "write_iops_log", "write_lat_log"
+        ],
+        "vals" : "^fio$"
+    },
+    "io_submit_modes" : {
+        "description" : "How IO submissions and completions are done",
+        "args" : [ "io_submit_mode" ],
+        "vals" : "^inline$|^offload$"
+    },
+    "time_smh" : {
+        "description" : "time in seconds, minutes, or hours: 10s 2m 1h",
+        "args" : [ "runtime", "steadystate_duration", "steadystate_ramp_time",
+               "steadystate", "ramp_time"
+             ],
+        "vals" : "^[1-9][0-9]*[smh]$"
+    },
+    "boolean" : {
+        "description" : "1 for true and 0 for false",
+        "args" : [
+            "allow_file_create", "allow_mounted_write", "allrandrepeat",
+            "atomic", "block_error_percentiles", "buffered", "cgroup_nodelete",
+            "clat_percentiles", "create_fsync", "create_only", "create_on_open",
+            "create_serialize", "direct", "disable_bw_measurement", "disable_clat",
+            "disable_lat", "disable_slat", "disk_util", "do_verify", "end_fsync",
+            "error_dump", "experimental_verify", "file_append", "fill_device",
+            "fsync_on_close", "gtod_reduce", "invalidate", "lat_percentiles", "log_max_value",
+            "log_offset", "log_store_compressed", "log_unix_epoch", "overwrite", "per_job_logs",
+            "pre_read", "randrepeat", "rate_ignore_thinktime", "replay_no_stall",
+            "scramble_buffers", "serialize_overlap", "stats", "sync", "trim_verify_zero",
+            "unified_rw_reporting", "unique_filename", "unlink_each_loop", "unlink",
+            "verify_dump", "erify_fatal", "verify_state_load", "verify_state_save",
+           "time_based"
+        ],
+        "vals" : "[0,1]"
+    },
+    "positive_integer" : {
+        "description" : "a whole number greater than 0",
+        "args" : [
+            "ba", "buffer_compress_chunk", "buffer_compress_percentage",
+            "bwavgtime", "cgroup_weight", "cpumask", "dedupe_percentage", "fdatasync", "flow_id",
+            "flow_sleep", "flow", "flow_watermark", "fsync", "gia", "gtod_cpu", "hugepage-size",
+            "iodepth_batch_complete_max", "iodepth_batch_complete_min", "iodepth_batch",
+            "iodepth_low", "iodepth", "iopsavgtime", "kb_base", "log_avg_msec", "log_compression",
+            "log_hist_coarseness", "log_hist_msec", "loops", "nice", "nrfiles", "numjobs",
+            "offset_align", "openfiles", "percentage_random", "prioclass", "prio", "rate_cycle",
+            "rate_iops_min", "rate_iops", "rate_min", "rate", "replay_align", "replay_scale",
+            "replay_time_scale", "rwmixread", "rwmixwrite", "significant_figures",
+            "thinktime_blocks", "thinktime_spin", "thinktime", "trim_backlog_batch",
+            "trim_percentage", "uid", "unit_base", "verify_async", "verify_backlog_batch",
+            "verify_interval", "verify_offset", "write_barrier"
+        ],
+        "vals" : "[1-9][0-9]*"
+    },
+    "key_only" : {
+        "description" : "options that are --key only and not --key=value",
+        "args" : [ "norandommap" ],
+        "vals" : "[ON,OFF]"
+    }
     },
     "units": {
        "size_BKMG": {
