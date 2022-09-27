@@ -75,6 +75,7 @@ $period{'metric-files'} = \@metric_files;
 push(@periods, \%period);
 $sample{'primary-metric'} = "iops";
 $sample{'primary-period'} = "measurement";
+$sample{'benchmark'} = "fio";
 $sample{'periods'} = \@periods;
 $sample{'rickshaw-bench-metric'}{'schema'}{'version'} = "2021.04.12";
 closedir $dh;
