@@ -105,7 +105,7 @@
                     "unpack": "tar -xzf fio.tar.gz",
                     "get_dir": "tar -tzf fio.tar.gz | head -n 1",
                     "commands": [
-                        "./configure",
+                        "./configure --disable-optimizations",
                         "make",
                         "make install",
                         "fio --version"
@@ -123,7 +123,7 @@
                     "unpack": "tar -xzf fio.tar.gz",
                     "get_dir": "tar -tzf fio.tar.gz | head -n 1",
                     "commands": [
-                        "./configure",
+                        "./configure --disable-optimizations",
                         "make",
                         "make install",
                         "fio --version"
