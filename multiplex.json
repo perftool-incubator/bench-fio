@@ -16,7 +16,7 @@
             { "arg": "write_lat_log", "vals": ["fio"] },
             { "arg": "log_avg_msec", "vals": ["1000"] },
             { "arg": "log_unix_epoch", "vals": ["1"] },
-            { "arg": "output-format", "vals": ["json"] },
+            { "arg": "output-format", "vals": ["json+"] },
             { "arg": "output", "vals": ["fio-result.json"] }
         ]
     },
