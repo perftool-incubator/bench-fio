@@ -7,7 +7,7 @@
     "benchmark": "fio",
     "controller" : {
         "pre-script" : "%bench-dir%/fio-prepare-jobfile",
-        "post-script" : "%bench-dir%fio-post-process"
+        "post-script" : "%bench-dir%fio-post-process.py"
     },
     "client" : {
         "files-from-controller": [
