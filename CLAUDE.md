@@ -5,7 +5,7 @@ Scripts and configuration to run the fio I/O benchmark within the crucible frame
 
 ## Languages
 - Bash: `fio-prepare-jobfile`, `fio-get-runtime`
-- Perl: `fio-post-process`
+- Python: `fio-post-process.py`
 
 ## Key Files
 | File | Purpose |
@@ -21,10 +21,10 @@ Scripts and configuration to run the fio I/O benchmark within the crucible frame
 ## Post-Processing
 - Parses 5 log types: iops, bw, lat, clat, slat
 - Primary metric: iops (used to determine measurement periods)
-- Uses `toolbox::metrics` and `toolbox::json` from `$TOOLBOX_HOME/perl`
+- Uses `CDMMetrics` from `toolbox.cdm_metrics`
 - Outputs `post-process-data.json` with period information
 
 ## Conventions
 - Primary branch is `master`
-- Standard Bash/Perl modelines and 4-space indentation
+- Standard Bash modelines and 4-space indentation
 - Path variables: `%bench-dir%` (benchmark repo location), `%run-dir%` (rickshaw run directory)
