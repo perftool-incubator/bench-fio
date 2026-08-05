@@ -19,11 +19,11 @@ from toolbox.fileio import open_read_text_file
 def main():
     metrics = CDMMetrics()
     type_map = {
-        "iops": {"source": "fio", "class": "throughput", "type": "iops"},
-        "bw": {"source": "fio", "class": "throughput", "type": "bw-KiBs"},
-        "lat": {"source": "fio", "class": "count", "type": "latency-usec"},
-        "clat": {"source": "fio", "class": "count", "type": "completion-latency-usec"},
-        "slat": {"source": "fio", "class": "count", "type": "submission-latency-usec"},
+        "iops": {"source": "fio", "class": "throughput", "type": "iops", "default-aggregation": "sum"},
+        "bw": {"source": "fio", "class": "throughput", "type": "bw-KiBs", "default-aggregation": "sum"},
+        "lat": {"source": "fio", "class": "latency", "type": "latency-usec", "default-aggregation": "avg"},
+        "clat": {"source": "fio", "class": "latency", "type": "completion-latency-usec", "default-aggregation": "avg"},
+        "slat": {"source": "fio", "class": "latency", "type": "submission-latency-usec", "default-aggregation": "avg"},
     }
     io_oper_map = {"0": "Read", "1": "Write", "2": "Trim"}
 
