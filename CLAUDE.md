@@ -12,6 +12,7 @@ Scripts and configuration to run the fio I/O benchmark within the crucible frame
 |------|---------|
 | `rickshaw.json` | Rickshaw integration: pre/post scripts, client command, parameter transformations |
 | `multiplex.json` | Parameter validation rules, unit conversions, and presets for multiplex |
+| `benchmark-metadata.json` | Machine-readable description and CDM-indexed source/type list (consumed by `crucible benchmarks list`) |
 | `fio-prepare-jobfile` | Copies fio job file to working directory before benchmark starts |
 | `fio-post-process` | Parses fio log files (iops, bw, lat, clat, slat), generates metrics, identifies primary period |
 | `fio-get-runtime` | Extracts `--runtime` value from command-line options |
