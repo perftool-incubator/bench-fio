@@ -65,7 +65,7 @@
             "name": "libaio_src",
             "type": "source",
             "source_info": {
-                "url": "https://releases.pagure.org/libaio/libaio-0.3.111.tar.gz",
+                "url": "https://github.com/yugabyte/libaio/archive/refs/tags/libaio-0.3.111.tar.gz",
                 "filename": "libaio.tar.gz",
                 "commands": {
                     "unpack": "tar -xzf libaio.tar.gz",
